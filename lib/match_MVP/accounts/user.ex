@@ -1,23 +1,20 @@
 defmodule Match_MVP.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Match_MVP.Repo
 
   schema "users" do
-    field :email, :string
+    field :username, :string
+    field :deposit, :float, default: 0.0
+    field :role, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
-    field :confirmed_at, :naive_datetime
 
     timestamps()
   end
 
   @doc """
   A user changeset for registration.
-
-  It is important to validate the length of both email and password.
-  Otherwise databases may truncate the email without warnings, which
-  could lead to unpredictable or insecure behaviour. Long passwords may
-  also be very expensive to hash for certain algorithms.
 
   ## Options
 
@@ -27,26 +24,44 @@ defmodule Match_MVP.Accounts.User do
       password field is not desired (like when using this changeset for
       validations on a LiveView form), this option can be set to `false`.
       Defaults to `true`.
-
-    * `:validate_email` - Validates the uniqueness of the email, in case
-      you don't want to validate the uniqueness of the email (like when
-      using this changeset for validations on a LiveView form before
-      submitting the form), this option can be set to `false`.
-      Defaults to `true`.
   """
+
   def registration_changeset(user, attrs, opts \\ []) do
-    user
-    |> cast(attrs, [:email, :password])
-    |> validate_email(opts)
-    |> validate_password(opts)
+   user
+   |> cast(attrs, [:deposit, :username, :password, :hashed_password, :role])
+   |> validate_username(opts)
+   |> validate_password(opts)
+   |> validate_role
   end
 
-  defp validate_email(changeset, opts) do
+  defp validate_username(changeset, _opts) do
     changeset
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
-    |> validate_length(:email, max: 160)
-    |> maybe_validate_unique_email(opts)
+    |> validate_required([:username])
+    |> validate_length(:username, min: 4, max: 32)
+    # |> maybe_validate_unique_username(opts)
+  end
+
+  defp validate_role(changeset) do
+    changeset
+    |> validate_required([:role])
+    # TODO: Fix me to use the enum values instead of hard-coding the mhere.
+    |> validate_inclusion(:role, ["buyer", "seller"])
+  end
+
+  # defp maybe_validate_unique_username(changeset, opts) do
+  #   if Keyword.get(opts, :validate_username, true) do
+  #     changeset
+  #     |> unsafe_validate_unique(:username, MatchMVP.Repo)
+  #     |> unique_constraint(:username)
+  #   else
+  #     changeset
+  #   end
+  # end
+
+  def username_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:username])
+    |> validate_username(opts)
   end
 
   defp validate_password(changeset, opts) do
@@ -74,31 +89,6 @@ defmodule Match_MVP.Accounts.User do
       |> delete_change(:password)
     else
       changeset
-    end
-  end
-
-  defp maybe_validate_unique_email(changeset, opts) do
-    if Keyword.get(opts, :validate_email, true) do
-      changeset
-      |> unsafe_validate_unique(:email, Match_MVP.Repo)
-      |> unique_constraint(:email)
-    else
-      changeset
-    end
-  end
-
-  @doc """
-  A user changeset for changing the email.
-
-  It requires the email to change otherwise an error is added.
-  """
-  def email_changeset(user, attrs, opts \\ []) do
-    user
-    |> cast(attrs, [:email])
-    |> validate_email(opts)
-    |> case do
-      %{changes: %{email: _}} = changeset -> changeset
-      %{} = changeset -> add_error(changeset, :email, "did not change")
     end
   end
 

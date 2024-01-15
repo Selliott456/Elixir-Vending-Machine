@@ -1,6 +1,7 @@
 defmodule Match_MVPWeb.UserLoginLive do
   use Match_MVPWeb, :live_view
 
+
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -26,9 +27,9 @@ defmodule Match_MVPWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Signing in..." class="w-full">
+          <button phx-disable-with="Signing in..." class="w-full">
             Sign in <span aria-hidden="true">→</span>
-          </.button>
+          </button>
         </:actions>
       </.simple_form>
     </div>
