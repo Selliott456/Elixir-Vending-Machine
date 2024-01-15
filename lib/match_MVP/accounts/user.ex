@@ -1,7 +1,6 @@
 defmodule Match_MVP.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Match_MVP.Repo
 
   schema "users" do
     field :username, :string
@@ -44,7 +43,6 @@ defmodule Match_MVP.Accounts.User do
   defp validate_role(changeset) do
     changeset
     |> validate_required([:role])
-    # TODO: Fix me to use the enum values instead of hard-coding the mhere.
     |> validate_inclusion(:role, ["buyer", "seller"])
   end
 

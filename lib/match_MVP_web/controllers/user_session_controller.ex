@@ -26,9 +26,9 @@ defmodule Match_MVPWeb.UserSessionController do
       |> put_flash(:info, info)
       |> UserAuth.log_in_user(user, user_params)
     else
-      # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
+
       conn
-      |> put_flash(:error, "Invalid email or password")
+      |> put_flash(:error, "Invalid username or password")
       |> put_flash(:username, String.slice(username, 0, 160))
       |> redirect(to: ~p"/users/log_in")
     end
