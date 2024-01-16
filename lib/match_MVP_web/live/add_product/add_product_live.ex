@@ -4,12 +4,15 @@ defmodule Match_MVPWeb.AddProductLive do
   alias Match_MVP.Products
   alias Match_MVP.Accounts
 
-
   def mount(_params, session, socket) do
     changeset = Products.change_product_registration(%Product{})
+    product_list = Products.list_products()
+    IO.inspect(Products.list_products())
 
     socket =
       socket
+      |> assign(trigger_submit: false, check_errors: false)
+      |> assign(:product_list, product_list)
       |> assign_current_user(session)
       |> assign_product()
       |> assign_form(changeset)
@@ -35,7 +38,7 @@ defmodule Match_MVPWeb.AddProductLive do
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "user")
+    form = to_form(changeset, as: "product")
 
     if changeset.valid? do
       assign(socket, form: form, check_errors: false)
@@ -44,33 +47,26 @@ defmodule Match_MVPWeb.AddProductLive do
     end
   end
 
-  def handle_event("add_product", %{"user" => product_params}, socket) do
+  def handle_event("add_product", %{"product" => product_params}, socket) do
     seller_id = socket.assigns.current_user.id
-    IO.inspect(seller_id)
-    IO.inspect(product_params)
 
     case Products.create_product(seller_id, product_params) do
       {:ok, _product} ->
-        IO.inspect("PRODUCT CREATED")
-        {:noreply,
-        socket
-        |> put_flash(:info, "Product successfully added")
-        |> push_redirect(to: "/")}
+
+        changeset = Products.change_product_registration(%Product{}, product_params)
+
+        socket =
+          socket
+          |> assign_form(Map.put(changeset,:action, :validate))
+          |> put_flash(:info, "success")
+
+
+        {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-
-        {:noreply,
-        socket
-        |> put_flash(:error, "BIG SMELLY ERROR")
-        |> push_redirect(to: "/")
-        |> assign(:changeset, changeset)}
+        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
     end
     {:noreply, socket}
-  end
-
-  def handle_params(_params, _url, socket) do
-    {:noreply,
-     socket}
   end
 
 end

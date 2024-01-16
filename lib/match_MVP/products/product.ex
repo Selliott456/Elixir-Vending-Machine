@@ -7,7 +7,7 @@ defmodule Match_MVP.Products.Product do
     field :cost, :float
     field :product_name, :string
 
-    belongs_to :seller, MatchMVP.Accounts.User
+    belongs_to :seller, Match_MVP.Accounts.User
 
     timestamps()
   end
@@ -16,5 +16,6 @@ defmodule Match_MVP.Products.Product do
     product
     |> cast(attrs, [:amount_available, :cost, :product_name])
     |> validate_required([:amount_available, :cost, :product_name])
+
   end
 end
