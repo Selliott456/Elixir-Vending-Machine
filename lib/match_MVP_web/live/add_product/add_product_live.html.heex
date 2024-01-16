@@ -1,32 +1,40 @@
 <%= if @current_user.role == "buyer" do %>
-<h1>Add Product</h1>
- <.simple_form for={@form} id="add_product_form" phx-submit="add_product">
-    <.input field={@form[:product_name]} type="text" label="Product name" required />
-    <.input field={@form[:amount_available]} type="text" label="Amount" required />
-    <.input field={@form[:cost]} type="text" label="Cost per item" required />
-    <.error :if={@check_errors}>
-      Oops, something went wrong! Please check the errors below.
-    </.error>
-    <:actions>
-      <button phx-disable-with="Adding product..." class="w-full">
-        Add product <span aria-hidden="true">→</span>
-      </button>
-    </:actions>
+  <h1>Add Product</h1>
+  <.simple_form for={@form} id="add_product_form" phx-submit="add_product">
+     <.input field={@form[:product_name]} type="text" label="Product name" required />
+     <.input field={@form[:amount_available]} type="text" label="Amount" required />
+     <.input field={@form[:cost]} type="text" label="Cost per item" required />
+     <.error :if={@check_errors}>
+       Oops, something went wrong! Please check the errors below.
+     </.error>
+     <:actions>
+       <button phx-disable-with="Adding product..." class="w-full">
+         Add product <span aria-hidden="true">→</span>
+       </button>
+     </:actions>
   </.simple_form>
 <% else %>
-<div>
-  <h2>Available balance</h2>
-<%= @current_user.deposit %>
+<div class="flex flex-row bg-red-100">
+  <h2>Available balance: £</h2>
+  <%= @current_user.deposit %>
 </div>
-
-<%= for product <- @product_list do %>
-  <.link href={~p"/"}>
-    <div class="bg-red-100 m-3">
-    <%= product.product_name%>
-    <%= product.amount_available %>
-    <%= product.cost %>
-    </div>
-  </.link>
-<% end %>
-
+  <div class="flex flex-wrap">
+    <%= for product <- @product_list do %>
+      <.link href={~p"/"}>
+        <div class="flex flex-col m-3 w-[100px] bg-blue-100 items-center justify-center min-h-[200px] min-w-[200px]">
+          <div class="m-2">
+            <h2><%= product.product_name%></h2>
+          </div>
+          <div class="my-1 flex flex-row">
+            <p>Number available: &nbsp</p>
+            <%= product.amount_available %>
+          </div>
+          <div class="my-1 flex flex-row">
+            <p> Price: £ </p>
+            <%= product.cost %>
+          </div>
+        </div>
+      </.link>
+    <% end %>
+  </div>
 <% end %>
