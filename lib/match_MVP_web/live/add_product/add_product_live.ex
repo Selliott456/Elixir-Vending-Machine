@@ -7,23 +7,25 @@ defmodule Match_MVPWeb.AddProductLive do
   def mount(_params, session, socket) do
     changeset = Products.change_product_registration(%Product{})
     product_list = Products.list_products()
-    IO.inspect(Products.list_products())
 
     socket =
       socket
       |> assign(trigger_submit: false, check_errors: false)
       |> assign(:product_list, product_list)
+      |> assign(:basket, [])
+      |> assign(:order_total, 0)
       |> assign_current_user(session)
-      |> assign_product()
+      # |> assign_product()
       |> assign_form(changeset)
+
 
       {:ok, socket}
   end
 
-  def assign_product(socket) do
-    socket
-    |> assign(:product, %Product{})
-  end
+  # def assign_product(socket) do
+  #   socket
+  #   |> assign(:product, %Product{})
+  # end
 
   def assign_current_user(socket, session) do
     case session do
@@ -69,4 +71,21 @@ defmodule Match_MVPWeb.AddProductLive do
     {:noreply, socket}
   end
 
+  def handle_event("add_to_basket", product, socket) do
+    case socket.assigns.basket do
+      [] ->
+        basket = [product]
+        order_total = calculate_order_total(basket)
+        {:noreply, socket|> assign(:basket, basket) |> assign(:order_total, order_total)}
+      _ ->
+        basket = socket.assigns.basket ++ [product]
+        order_total = calculate_order_total(basket)
+        {:noreply, socket|> assign(:basket, basket)|> assign(:order_total, order_total)}
+    end
+  end
+
+  def calculate_order_total(basket) do
+    item_costs = Enum.map(basket, fn item -> String.to_float(item["cost"]) end)
+    Float.round(Enum.reduce(item_costs, fn item_cost, acc -> item_cost + acc end), 2)
+  end
 end

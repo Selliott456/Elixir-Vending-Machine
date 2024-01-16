@@ -1,3 +1,5 @@
+
+<div class="flex flex-row">
 <%= if @current_user.role == "buyer" do %>
   <h1>Add Product</h1>
   <.simple_form for={@form} id="add_product_form" phx-submit="add_product">
@@ -20,21 +22,33 @@
 </div>
   <div class="flex flex-wrap">
     <%= for product <- @product_list do %>
-      <.link href={~p"/"}>
-        <div class="flex flex-col m-3 w-[100px] bg-blue-100 items-center justify-center min-h-[200px] min-w-[200px]">
-          <div class="m-2">
-            <h2><%= product.product_name%></h2>
-          </div>
-          <div class="my-1 flex flex-row">
-            <p>Number available: &nbsp</p>
-            <%= product.amount_available %>
-          </div>
-          <div class="my-1 flex flex-row">
-            <p> Price: £ </p>
-            <%= product.cost %>
-          </div>
+      <div phx-click="add_to_basket"
+      phx-value-product_name= {product.product_name}
+      phx-value-amount_available= {product.amount_available}
+      phx-value-cost= {product.cost}
+      class="flex flex-col m-3 w-[100px] bg-blue-100 items-center justify-center min-h-[200px] min-w-[200px]">
+        <div class="m-2">
+          <h2><%= product.product_name%></h2>
         </div>
-      </.link>
+        <div class="my-1 flex flex-row">
+          <p>Number available: &nbsp</p>
+          <%= product.amount_available %>
+        </div>
+        <div class="my-1 flex flex-row">
+          <p> Price: £ </p>
+          <%= product.cost %>
+        </div>
+      </div>
     <% end %>
   </div>
 <% end %>
+  <section class="bg-green-100 w-[600px] max-h-[400px] my-3">
+    <p class="m-3">basket</p>
+    <%= for product <- @basket do%>
+    <div class="flex flex-col">
+    <%= product["product_name"] %>
+    </div>
+    <%end %>
+    <p> total: £<%= @order_total %> </p>
+  </section>
+</div>
