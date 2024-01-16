@@ -4,7 +4,7 @@ defmodule Match_MVP.Products.Product do
 
   schema "products" do
     field :amount_available, :integer
-    field :cost, :integer
+    field :cost, :float
     field :product_name, :string
 
     belongs_to :seller, MatchMVP.Accounts.User

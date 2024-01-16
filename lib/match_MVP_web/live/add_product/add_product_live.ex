@@ -7,16 +7,14 @@ defmodule Match_MVPWeb.AddProductLive do
 
   def mount(_params, session, socket) do
     changeset = Products.change_product_registration(%Product{})
-    username = live_flash(socket.assigns.flash, :username)
-    form = to_form(%{"username" => username}, as: "user")
 
     socket =
       socket
       |> assign_current_user(session)
       |> assign_product()
-      |> assign(:changeset, changeset)
+      |> assign_form(changeset)
 
-      {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+      {:ok, socket}
   end
 
   def assign_product(socket) do
@@ -36,8 +34,19 @@ defmodule Match_MVPWeb.AddProductLive do
     end
   end
 
-  def handle_event("save", %{"product" => product_params}, socket) do
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    form = to_form(changeset, as: "user")
+
+    if changeset.valid? do
+      assign(socket, form: form, check_errors: false)
+    else
+      assign(socket, form: form)
+    end
+  end
+
+  def handle_event("add_product", %{"user" => product_params}, socket) do
     seller_id = socket.assigns.current_user.id
+    IO.inspect(seller_id)
     IO.inspect(product_params)
 
     case Products.create_product(seller_id, product_params) do
@@ -49,9 +58,11 @@ defmodule Match_MVPWeb.AddProductLive do
         |> push_redirect(to: "/")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+
         {:noreply,
         socket
         |> put_flash(:error, "BIG SMELLY ERROR")
+        |> push_redirect(to: "/")
         |> assign(:changeset, changeset)}
     end
     {:noreply, socket}

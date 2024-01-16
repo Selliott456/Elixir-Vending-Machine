@@ -1,19 +1,17 @@
 <p> add product </p>
-
- <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
-        <.input field={@form[:product_name]} type="text" label="username" required />
-        <.input field={@form[:amount]} type="password" label="Password" required />
-        <.input field={@form[:cost]} type="password" label="Password" required />
-
-        <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
-            Forgot your password?
-          </.link>
-        </:actions>
-        <:actions>
-          <button phx-disable-with="Signing in..." class="w-full">
-            Sign in <span aria-hidden="true">→</span>
-          </button>
-        </:actions>
-      </.simple_form>
+<%= if @current_user.role != "buyer" do %>
+ <.simple_form for={@form} id="add_product_form" phx-submit="add_product">
+    <.input field={@form[:product_name]} type="text" label="Product name" required />
+    <.input field={@form[:amount_available]} type="text" label="Amount" required />
+    <.input field={@form[:cost]} type="text" label="Cost per item" required />
+    <:actions>
+    </:actions>
+    <:actions>
+      <button phx-disable-with="Signing in..." class="w-full">
+        Sign in <span aria-hidden="true">→</span>
+      </button>
+    </:actions>
+  </.simple_form>
+<% else %>
+  <p>seller</p>
+<% end %>
