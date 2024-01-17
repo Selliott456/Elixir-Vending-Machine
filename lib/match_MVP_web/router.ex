@@ -66,9 +66,6 @@ defmodule Match_MVPWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{Match_MVPWeb.UserAuth, :ensure_authenticated}] do
-
-
-
     end
   end
 
@@ -81,7 +78,7 @@ defmodule Match_MVPWeb.Router do
       on_mount: [{Match_MVPWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
-      live "/users/add_product", AddProductLive
+      live "/users/user_actions", UserActionsLive
       live "/users/checkout", CheckoutLive
     end
   end

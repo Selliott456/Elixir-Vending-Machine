@@ -4,7 +4,6 @@ defmodule Match_MVPWeb.UserRegistrationLive do
   alias Match_MVP.Accounts
   alias Match_MVP.Accounts.User
 
-
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -28,16 +27,14 @@ defmodule Match_MVPWeb.UserRegistrationLive do
         action={~p"/users/log_in?_action=registered"}
         method="post"
       >
+        <.input field={@form[:username]} type="text" label="Username" />
+        <.input field={@form[:password]} type="text" label="password" />
+        <.input field={@form[:role]} type="select" options={["buyer", "seller"]} label="role" />
 
-      <.input field={@form[:username]} type="text" label="Username" />
-      <.input field={@form[:password]} type="text" label="password" />
-      <.input field={@form[:role]} type="select" options={["buyer", "seller"]} label="role"/>
-
-      <.input field={@form[:deposit]} type="text" label="deposit" />
+        <.input field={@form[:deposit]} type="text" label="deposit" />
         <.error :if={@check_errors}>
           Oops, something went wrong! Please check the errors below.
         </.error>
-
 
         <:actions>
           <button phx-disable-with="Creating account..." class="w-full">Create an account</button>
@@ -61,7 +58,6 @@ defmodule Match_MVPWeb.UserRegistrationLive do
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
-
         changeset = Accounts.change_user_registration(user)
         {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 

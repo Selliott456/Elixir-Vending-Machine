@@ -26,14 +26,13 @@ defmodule Match_MVP.Accounts.User do
   """
 
   def registration_changeset(user, attrs, opts \\ []) do
-   user
-   |> cast(attrs, [:deposit, :username, :password, :hashed_password, :role])
-   |> validate_username(opts)
-   |> validate_password(opts)
-   |> validate_number(:deposit, greater_than: 0)
-   |> validate_role
+    user
+    |> cast(attrs, [:deposit, :username, :password, :hashed_password, :role])
+    |> validate_username(opts)
+    |> validate_password(opts)
+    |> validate_number(:deposit, greater_than: 0)
+    |> validate_role
   end
-
 
   def update_user_deposit_changeset(user, attrs, _opts \\ []) do
     user
@@ -44,6 +43,7 @@ defmodule Match_MVP.Accounts.User do
     changeset
     |> validate_required([:username])
     |> validate_length(:username, min: 4, max: 32)
+
     # |> maybe_validate_unique_username(opts)
   end
 

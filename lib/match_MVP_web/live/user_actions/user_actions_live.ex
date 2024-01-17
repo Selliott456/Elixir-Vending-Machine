@@ -1,16 +1,14 @@
-defmodule Match_MVPWeb.AddProductLive do
-  alias Match_MVP.Orders
+defmodule Match_MVPWeb.UserActionsLive do
   use Match_MVPWeb, :live_view
+  alias Match_MVP.Orders
   alias Match_MVP.VendingMachine.Product
   alias Match_MVP.Products
   alias Match_MVP.Accounts
-
 
   def mount(_params, session, socket) do
     remove_empty_products()
     changeset = Products.change_product_registration(%Product{})
     product_list = Products.list_products()
-
 
     socket =
       socket
@@ -21,7 +19,7 @@ defmodule Match_MVPWeb.AddProductLive do
       |> assign_current_user(session)
       |> assign_form(changeset)
 
-      {:ok, socket}
+    {:ok, socket}
   end
 
   def assign_current_user(socket, session) do
@@ -51,12 +49,11 @@ defmodule Match_MVPWeb.AddProductLive do
 
     case Products.create_product(seller_id, product_params) do
       {:ok, _product} ->
-
         changeset = Products.change_product_registration(%Product{}, product_params)
 
         socket =
           socket
-          |> assign_form(Map.put(changeset,:action, :validate))
+          |> assign_form(Map.put(changeset, :action, :validate))
           |> put_flash(:info, "success")
 
         {:noreply, socket}
@@ -64,49 +61,52 @@ defmodule Match_MVPWeb.AddProductLive do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
     end
+
     {:noreply, socket}
   end
-
 
   def handle_event("add_to_basket", product, socket) do
     case socket.assigns.basket do
       [] ->
         basket = [product]
         order_total = calculate_order_total(basket, socket)
-        {:noreply, socket|> assign(:basket, basket) |> assign(:order_total, order_total)}
+        {:noreply, socket |> assign(:basket, basket) |> assign(:order_total, order_total)}
+
       _ ->
         basket = socket.assigns.basket ++ [product]
         order_total = calculate_order_total(basket, socket)
-        {:noreply, socket|> assign(:basket, basket)|> assign(:order_total, order_total)}
+        {:noreply, socket |> assign(:basket, basket) |> assign(:order_total, order_total)}
     end
   end
 
   def handle_event("purchase", _params, socket) do
-      basket = socket.assigns.basket
-      create_order(socket)
+    basket = socket.assigns.basket
+    create_order(socket)
 
-      Enum.map(basket, fn product ->
+    Enum.map(basket, fn product ->
+      product_id = String.to_integer(product["id"])
 
-        product_id = String.to_integer(product["id"])
+      case Products.get_product_by_id!(product_id) do
+        %Product{} = product ->
+          Products.update_product(product, %{amount_available: product.amount_available - 1})
+          {:noreply, socket}
 
-        case Products.get_product_by_id!(product_id) do
-           %Product{} = product ->
-              Products.update_product(product, %{amount_available: product.amount_available - 1})
-              {:noreply, socket}
+        _ ->
+          socket =
+            socket
+            |> put_flash(:error, "something went wrong")
 
-          _ ->
-            socket =
-              socket
-              |> put_flash(:error, "something went wrong")
-              {:noreply, socket}
-        end
-      end)
-      {:noreply, socket}
+          {:noreply, socket}
+      end
+    end)
+
+    {:noreply, socket}
   end
 
   def calculate_order_total(basket, socket) do
     item_costs = Enum.map(basket, fn item -> String.to_float(item["cost"]) end)
     Float.round(Enum.reduce(item_costs, fn item_cost, acc -> item_cost + acc end), 2)
+
     # Orders.create_order(socket.assigns.current_user.id, %{basket: basket, total_cost: item_costs, change_due: 12.34})
   end
 
@@ -114,10 +114,10 @@ defmodule Match_MVPWeb.AddProductLive do
     all_products = Products.list_products()
 
     Enum.map(all_products, fn product ->
-    case product.amount_available do
-      0 -> Products.delete_product(product)
-      _ -> nil
-    end
+      case product.amount_available do
+        0 -> Products.delete_product(product)
+        _ -> nil
+      end
     end)
   end
 

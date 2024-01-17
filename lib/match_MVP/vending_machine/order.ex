@@ -16,5 +16,4 @@ defmodule Match_MVP.VendingMachine.Order do
     |> cast(attrs, [:basket, :total_cost])
     |> validate_required([:basket, :total_cost])
   end
-
 end

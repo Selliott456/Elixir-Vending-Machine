@@ -1,7 +1,6 @@
 defmodule Match_MVPWeb.UserLoginLive do
   use Match_MVPWeb, :live_view
 
-
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">

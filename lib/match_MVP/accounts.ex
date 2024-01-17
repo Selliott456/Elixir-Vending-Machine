@@ -10,7 +10,6 @@ defmodule Match_MVP.Accounts do
 
   ## Database getters
 
-
   def get_user_by_username(username) when is_binary(username) do
     Repo.get_by(User, username: username)
   end
@@ -39,7 +38,7 @@ defmodule Match_MVP.Accounts do
 
   def update_user(%User{} = user, attrs) do
     user
-    |> User.update_user_deposit_changeset( attrs)
+    |> User.update_user_deposit_changeset(attrs)
     |> Repo.update!()
   end
 
@@ -78,14 +77,12 @@ defmodule Match_MVP.Accounts do
 
   ## Settings
 
-
   def apply_user_username(user, password, attrs) do
     user
     |> User.username_changeset(attrs)
     |> User.validate_current_password(password)
     |> Ecto.Changeset.apply_action(:update)
   end
-
 
   @doc """
   Updates the user password.
@@ -126,7 +123,6 @@ defmodule Match_MVP.Accounts do
     Repo.delete_all(UserToken.by_token_and_context_query(token, "session"))
     :ok
   end
-
 
   @doc """
   Confirms a user by the given token.

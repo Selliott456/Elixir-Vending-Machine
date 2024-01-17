@@ -1,0 +1,71 @@
+<div class="flex flex-col bg-spacerGrey rounded">
+  <%= if @current_user.role == "buyer" do %>
+    <h1>Add Product</h1>
+    <.simple_form for={@form} id="add_product_form" phx-submit="add_product">
+      <.input field={@form[:product_name]} type="text" label="Product name" required />
+      <.input field={@form[:amount_available]} type="text" label="Amount" required />
+      <.input field={@form[:cost]} type="text" label="Cost per item" required />
+      <.error :if={@check_errors}>
+        Oops, something went wrong! Please check the errors below.
+      </.error>
+      <:actions>
+        <button phx-disable-with="Adding product..." class="w-full">
+          Add product <span aria-hidden="true">→</span>
+        </button>
+      </:actions>
+    </.simple_form>
+  <% else %>
+    <div class="flex flex-row">
+    <div class="flex flex-col">
+      <p class="bg-secondaryPink text-white rounded mt-[20px] p-[10px] self-center text-[40px]">Vending Machine</p>
+      <div class="flex flex-wrap justify-center m-6 bg-secondaryGreen rounded">
+        <%= for product <- @product_list do %>
+          <div
+            phx-click="add_to_basket"
+            phx-value-product_name={product.product_name}
+            phx-value-amount_available={product.amount_available}
+            phx-value-cost={product.cost}
+            phx-value-id={product.id}
+            class="flex flex-col m-3 w-[100px] bg-primaryVariantOrange rounded-2xl items-center justify-center min-h-[150px] min-w-[150px] justify-center cursor-pointer">
+            <div class="m-2 text-[20px]">
+              <h2><%= product.product_name %></h2>
+            </div>
+            <div class="my-1 flex flex-row">
+              <p>Available: &nbsp</p>
+              <%= product.amount_available %>
+            </div>
+            <div class="my-1 flex flex-row">
+              <p>Price: £</p>
+              <%= product.cost %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      </div>
+      <div class="flex flex-col mx-[20px]">
+        <div class="flex flex-row items-center justify-center min-w-[200px] bg-red-100 mt-[125px] mb-[20px] max-w-1 ">
+
+          <h2 class="px-[10] py-[15px]">Available balance: £</h2>
+          <%= @current_user.deposit %>
+        </div>
+        <div class="flex flex-col items-center bg-green-100 max-h-[400px] overflow-scroll">
+                  <p class="my-[20px]">total: £<%= @order_total %></p>
+          <%= if @current_user.deposit >= @order_total do %>
+            <.link class="bg-secondaryGreen text-white p-2 rounded-xl mb-[20px]" link href={~p"/users/checkout"} phx-click="purchase">checkout</.link>
+          <% else %>
+          <p class="bg-red-600 animate-pulse">!You have insufficient funds!</p>
+             <.link href={~p"/users/user_actions"}class="bg-secondaryGreen text-white p-2 rounded-xl mx-auto" phx-click="purchase">
+             click to restart order
+             </.link>
+          <% end %>
+          <p class="m-3">basket</p>
+          <%= for product <- @basket do %>
+            <div class="flex flex-col">
+              <%= product["product_name"] %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

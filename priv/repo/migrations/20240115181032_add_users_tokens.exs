@@ -9,6 +9,7 @@ defmodule Match_MVP.Repo.Migrations.AddUsersTokens do
       add :sent_to, :string
       timestamps(updated_at: false)
     end
+
     create index(:users_tokens, [:user_id])
     create unique_index(:users_tokens, [:context, :token])
   end
