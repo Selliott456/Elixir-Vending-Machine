@@ -84,20 +84,6 @@ defmodule Match_MVP.Accounts do
     |> Ecto.Changeset.apply_action(:update)
   end
 
-  @doc """
-  Updates the user password.
-
-  ## Examples
-
-      iex> update_user_password(user, "valid password", %{password: ...})
-      {:ok, %User{}}
-
-      iex> update_user_password(user, "invalid password", %{password: ...})
-      {:error, %Ecto.Changeset{}}
-
-  """
-
-  ## Session
 
   @doc """
   Generates a session token.
@@ -122,18 +108,5 @@ defmodule Match_MVP.Accounts do
   def delete_user_session_token(token) do
     Repo.delete_all(UserToken.by_token_and_context_query(token, "session"))
     :ok
-  end
-
-  @doc """
-  Confirms a user by the given token.
-
-  If the token matches, the user account is marked as confirmed
-  and the token is deleted.
-  """
-
-  defp confirm_user_multi(user) do
-    Ecto.Multi.new()
-    |> Ecto.Multi.update(:user, User.confirm_changeset(user))
-    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, ["confirm"]))
   end
 end

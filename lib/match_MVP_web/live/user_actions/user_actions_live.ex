@@ -69,12 +69,12 @@ defmodule Match_MVPWeb.UserActionsLive do
     case socket.assigns.basket do
       [] ->
         basket = [product]
-        order_total = calculate_order_total(basket, socket)
+        order_total = calculate_order_total(basket)
         {:noreply, socket |> assign(:basket, basket) |> assign(:order_total, order_total)}
 
       _ ->
         basket = socket.assigns.basket ++ [product]
-        order_total = calculate_order_total(basket, socket)
+        order_total = calculate_order_total(basket)
         {:noreply, socket |> assign(:basket, basket) |> assign(:order_total, order_total)}
     end
   end
@@ -103,7 +103,7 @@ defmodule Match_MVPWeb.UserActionsLive do
     {:noreply, socket}
   end
 
-  def calculate_order_total(basket, socket) do
+  def calculate_order_total(basket) do
     item_costs = Enum.map(basket, fn item -> String.to_float(item["cost"]) end)
     Float.round(Enum.reduce(item_costs, fn item_cost, acc -> item_cost + acc end), 2)
 
