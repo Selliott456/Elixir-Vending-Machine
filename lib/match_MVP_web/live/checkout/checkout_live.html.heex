@@ -1,3 +1,5 @@
 <h1>Checkout</h1>
 
-<h2>Change:</h2>
+<h2>Change due: £<%= @change_due %></h2>
+<button phx-click="make_change" class="bg-red-100">collect change</button>
+<button phx-click="update_balance" class="bg-green-100">update balance</button>

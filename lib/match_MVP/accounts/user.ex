@@ -33,6 +33,12 @@ defmodule Match_MVP.Accounts.User do
    |> validate_role
   end
 
+
+  def update_user_deposit_changeset(user, attrs, _opts \\ []) do
+    user
+    |> cast(attrs, [:deposit])
+  end
+
   defp validate_username(changeset, _opts) do
     changeset
     |> validate_required([:username])

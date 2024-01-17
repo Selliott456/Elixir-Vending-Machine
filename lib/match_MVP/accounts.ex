@@ -37,6 +37,12 @@ defmodule Match_MVP.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def update_user(%User{} = user, attrs) do
+    user
+    |> User.update_user_deposit_changeset( attrs)
+    |> Repo.update!()
+  end
+
   ## User registration
 
   @doc """
