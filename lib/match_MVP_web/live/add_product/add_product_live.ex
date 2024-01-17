@@ -1,8 +1,10 @@
 defmodule Match_MVPWeb.AddProductLive do
+  alias Match_MVPWeb.CheckoutLive
   use Match_MVPWeb, :live_view
   alias Match_MVP.Products.Product
   alias Match_MVP.Products
   alias Match_MVP.Accounts
+
 
   def mount(_params, session, socket) do
     changeset = Products.change_product_registration(%Product{})
@@ -15,17 +17,10 @@ defmodule Match_MVPWeb.AddProductLive do
       |> assign(:basket, [])
       |> assign(:order_total, 0)
       |> assign_current_user(session)
-      # |> assign_product()
       |> assign_form(changeset)
-
 
       {:ok, socket}
   end
-
-  # def assign_product(socket) do
-  #   socket
-  #   |> assign(:product, %Product{})
-  # end
 
   def assign_current_user(socket, session) do
     case session do
@@ -62,7 +57,6 @@ defmodule Match_MVPWeb.AddProductLive do
           |> assign_form(Map.put(changeset,:action, :validate))
           |> put_flash(:info, "success")
 
-
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -82,6 +76,28 @@ defmodule Match_MVPWeb.AddProductLive do
         order_total = calculate_order_total(basket)
         {:noreply, socket|> assign(:basket, basket)|> assign(:order_total, order_total)}
     end
+  end
+
+  def handle_event("purchase", _params, socket) do
+      basket = socket.assigns.basket
+
+      Enum.map(basket, fn product ->
+
+        product_id = String.to_integer(product["id"])
+
+        case Products.get_product_by_id!(product_id) do
+           %Product{} = product ->
+              Products.update_product(product, %{amount_available: product.amount_available - 1})
+              {:noreply, socket}
+
+          _ ->
+            socket =
+              socket
+              |> put_flash(:error, "something went wrong")
+              {:noreply, socket}
+        end
+      end)
+      {:noreply, socket}
   end
 
   def calculate_order_total(basket) do

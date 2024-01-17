@@ -8,6 +8,8 @@ defmodule Match_MVP.Products do
     Repo.all(Product)
   end
 
+  def get_product_by_id!(id), do: Repo.get!(Product, id)
+
   def create_product(seller_id, attrs \\ %{}) do
     %Product{seller_id: seller_id}
     |> Product.changeset(attrs)

@@ -16,6 +16,5 @@ defmodule Match_MVP.Products.Product do
     product
     |> cast(attrs, [:amount_available, :cost, :product_name])
     |> validate_required([:amount_available, :cost, :product_name])
-
   end
 end
