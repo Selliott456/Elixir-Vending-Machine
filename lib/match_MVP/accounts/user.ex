@@ -30,6 +30,7 @@ defmodule Match_MVP.Accounts.User do
    |> cast(attrs, [:deposit, :username, :password, :hashed_password, :role])
    |> validate_username(opts)
    |> validate_password(opts)
+   |> validate_number(:deposit, greater_than: 0)
    |> validate_role
   end
 

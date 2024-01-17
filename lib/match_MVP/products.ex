@@ -5,7 +5,9 @@ defmodule Match_MVP.Products do
   alias Match_MVP.VendingMachine.Product
 
   def list_products() do
-    Repo.all(Product)
+    Product
+    |> order_by([p], desc: p.inserted_at)
+    |> Repo.all()
   end
 
   def get_product_by_id!(id), do: Repo.get!(Product, id)

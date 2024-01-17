@@ -16,5 +16,7 @@ defmodule Match_MVP.VendingMachine.Product do
     product
     |> cast(attrs, [:amount_available, :cost, :product_name])
     |> validate_required([:amount_available, :cost, :product_name])
+    |> validate_number(:cost, greater_than: 0)
+    |> validate_number(:amount_available, greater_than: 0)
   end
 end
