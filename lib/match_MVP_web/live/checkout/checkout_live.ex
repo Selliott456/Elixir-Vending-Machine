@@ -6,7 +6,7 @@ defmodule Match_MVPWeb.CheckoutLive do
   alias Match_MVP.Accounts.User
 
   def mount(_params, session, socket) do
-    user_order = Orders.get_order_by_user_id(socket.assigns.current_user.id)
+    user_order = Orders.get_orders_by_user_id(socket.assigns.current_user.id)
     change_due = Float.round(socket.assigns.current_user.deposit - user_order.total_cost, 2)
     change_in_cents = change_due * 100
     [change_available, leftover] = round_cash(change_in_cents)
@@ -18,7 +18,7 @@ defmodule Match_MVPWeb.CheckoutLive do
       |> assign(:order, user_order)
       |> assign(:change_due, change_due)
       |> assign(:change_available, change_available / 100)
-      |> assign(:change_leftover, leftover / 100)
+      |> assign(:change_leftover, Float.floor(leftover / 100))
       |> assign(:coin_values, coin_values)
 
     {:ok, socket}
@@ -39,7 +39,8 @@ defmodule Match_MVPWeb.CheckoutLive do
   def handle_event("make_change", _params, socket) do
     case Accounts.get_user!(socket.assigns.current_user.id) do
       %User{} = user ->
-        Accounts.update_user(user, %{deposit: 0})
+        IO.inspect(Float.floor(socket.assigns.change_leftover / 100))
+        Accounts.update_user(user, %{deposit: socket.assigns.change_leftover / 100})
         {:noreply, socket}
 
       _ ->

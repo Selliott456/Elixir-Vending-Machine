@@ -5,9 +5,10 @@ defmodule Match_MVP.Orders do
   alias Match_MVP.VendingMachine.Order
   def get_order_by_id(id), do: Repo.get!(Order, id)
 
-  def get_order_by_user_id(user_id) do
+  def get_orders_by_user_id(user_id) do
     Order
-    |> where([u], u.user_id == ^user_id)
+    |> where([o], o.user_id == ^user_id)
+    |> last(:inserted_at)
     |> Repo.one!()
   end
 
