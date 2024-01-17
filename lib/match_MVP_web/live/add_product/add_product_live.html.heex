@@ -46,14 +46,14 @@
   <section class="bg-green-100 w-[600px] max-h-[400px] my-3">
     <p class="m-3">basket</p>
     <%= for product <- @basket do%>
-    <%= if product["amount_available"] > 0 do%>
+
       <div class="flex flex-col">
       <%= product["product_name"] %>
       </div>
-      <% end %>
+
     <% end %>
     <p> total: £<%= @order_total %> </p>
-    <.link phx-click="purchase">checkout</.link>
+    <.link href={~p"/users/checkout"} phx-click="purchase">checkout</.link>
   </section>
 
 </div>

@@ -1,5 +1,4 @@
 defmodule Match_MVPWeb.AddProductLive do
-  alias Match_MVPWeb.CheckoutLive
   use Match_MVPWeb, :live_view
   alias Match_MVP.Products.Product
   alias Match_MVP.Products
@@ -7,8 +6,10 @@ defmodule Match_MVPWeb.AddProductLive do
 
 
   def mount(_params, session, socket) do
+    remove_empty_products()
     changeset = Products.change_product_registration(%Product{})
     product_list = Products.list_products()
+
 
     socket =
       socket
@@ -65,6 +66,7 @@ defmodule Match_MVPWeb.AddProductLive do
     {:noreply, socket}
   end
 
+
   def handle_event("add_to_basket", product, socket) do
     case socket.assigns.basket do
       [] ->
@@ -103,5 +105,16 @@ defmodule Match_MVPWeb.AddProductLive do
   def calculate_order_total(basket) do
     item_costs = Enum.map(basket, fn item -> String.to_float(item["cost"]) end)
     Float.round(Enum.reduce(item_costs, fn item_cost, acc -> item_cost + acc end), 2)
+  end
+
+  def remove_empty_products() do
+    all_products = Products.list_products()
+
+    Enum.map(all_products, fn product ->
+    case product.amount_available do
+      0 -> Products.delete_product(product)
+      _ -> nil
+    end
+    end)
   end
 end
