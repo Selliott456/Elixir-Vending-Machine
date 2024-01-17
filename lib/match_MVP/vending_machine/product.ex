@@ -1,4 +1,4 @@
-defmodule Match_MVP.Products.Product do
+defmodule Match_MVP.VendingMachine.Product do
   use Ecto.Schema
   import Ecto.Changeset
 

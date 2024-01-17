@@ -1,6 +1,7 @@
 defmodule Match_MVPWeb.AddProductLive do
+  alias Match_MVP.Orders
   use Match_MVPWeb, :live_view
-  alias Match_MVP.Products.Product
+  alias Match_MVP.VendingMachine.Product
   alias Match_MVP.Products
   alias Match_MVP.Accounts
 
@@ -71,17 +72,18 @@ defmodule Match_MVPWeb.AddProductLive do
     case socket.assigns.basket do
       [] ->
         basket = [product]
-        order_total = calculate_order_total(basket)
+        order_total = calculate_order_total(basket, socket)
         {:noreply, socket|> assign(:basket, basket) |> assign(:order_total, order_total)}
       _ ->
         basket = socket.assigns.basket ++ [product]
-        order_total = calculate_order_total(basket)
+        order_total = calculate_order_total(basket, socket)
         {:noreply, socket|> assign(:basket, basket)|> assign(:order_total, order_total)}
     end
   end
 
   def handle_event("purchase", _params, socket) do
       basket = socket.assigns.basket
+      create_order(socket)
 
       Enum.map(basket, fn product ->
 
@@ -102,9 +104,10 @@ defmodule Match_MVPWeb.AddProductLive do
       {:noreply, socket}
   end
 
-  def calculate_order_total(basket) do
+  def calculate_order_total(basket, socket) do
     item_costs = Enum.map(basket, fn item -> String.to_float(item["cost"]) end)
     Float.round(Enum.reduce(item_costs, fn item_cost, acc -> item_cost + acc end), 2)
+    # Orders.create_order(socket.assigns.current_user.id, %{basket: basket, total_cost: item_costs, change_due: 12.34})
   end
 
   def remove_empty_products() do
@@ -116,5 +119,13 @@ defmodule Match_MVPWeb.AddProductLive do
       _ -> nil
     end
     end)
+  end
+
+  defp create_order(socket) do
+    user_id = socket.assigns.current_user.id
+    basket = socket.assigns.basket
+    total_cost = socket.assigns.order_total
+
+    Orders.create_order(user_id, %{basket: basket, total_cost: total_cost})
   end
 end

@@ -2,7 +2,7 @@ defmodule Match_MVP.Products do
   alias Match_MVP.Repo
   import Ecto.Query, warn: false
 
-  alias Match_MVP.Products.Product
+  alias Match_MVP.VendingMachine.Product
 
   def list_products() do
     Repo.all(Product)
