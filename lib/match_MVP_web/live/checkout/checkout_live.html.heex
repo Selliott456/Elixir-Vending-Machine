@@ -3,3 +3,7 @@
 <h2>Change due: £<%= @change_due %></h2>
 <button phx-click="make_change" class="bg-red-100">collect change</button>
 <button phx-click="update_balance" class="bg-green-100">update balance</button>
+<p>change_available: £<%= @change_available %> </p>
+<p>change_leftover: £<%= @change_leftover %></p>
+
+<%=@coin_values %>
