@@ -1,5 +1,5 @@
 <div class="flex flex-col bg-spacerGrey pt-[30px] rounded">
-  <%= if @current_user.role == "buyer" do %>
+  <%= if @current_user.role != "buyer" do %>
     <h1>Add Product</h1>
     <.simple_form for={@form} id="add_product_form" phx-submit="add_product">
       <.input field={@form[:product_name]} type="text" label="Product name" required />

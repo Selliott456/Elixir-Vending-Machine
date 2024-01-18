@@ -59,8 +59,11 @@ defmodule Match_MVPWeb.UserActionsLive do
 
         {:noreply, socket}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+        {:error, _ } ->
+        socket =
+          socket
+          |> put_flash(:error, "product already in stock")
+        {:noreply, socket}
     end
 
     {:noreply, socket}

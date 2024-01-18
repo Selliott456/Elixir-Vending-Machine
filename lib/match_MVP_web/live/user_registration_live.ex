@@ -30,8 +30,6 @@ defmodule Match_MVPWeb.UserRegistrationLive do
         <.input field={@form[:username]} type="text" label="Username" />
         <.input field={@form[:password]} type="text" label="password" />
         <.input field={@form[:role]} type="select" options={["buyer", "seller"]} label="role" />
-
-        <.input field={@form[:deposit]} type="text" label="deposit" />
         <.error :if={@check_errors}>
           Oops, something went wrong! Please check the errors below.
         </.error>

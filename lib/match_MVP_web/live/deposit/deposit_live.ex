@@ -28,6 +28,7 @@ defmodule Match_MVPWeb.DepositLive do
   def handle_event("deposit_coin", %{"deposit" => deposit}, socket) do
     user = socket.assigns.current_user
     total_deposit = calculate_deposit(socket, deposit)
+
     case Accounts.update_user(user, %{deposit: total_deposit}) do
       %User{} = user ->
         socket =
@@ -35,6 +36,7 @@ defmodule Match_MVPWeb.DepositLive do
           |> assign(:deposit, Float.round(user.deposit, 2))
 
         {:noreply, socket}
+
       _ ->
         socket =
           socket
@@ -58,7 +60,7 @@ defmodule Match_MVPWeb.DepositLive do
   end
 
   def calculate_deposit(socket, deposit) do
-       socket.assigns.current_user.deposit + (String.to_integer(deposit["deposit"])/100)
+    socket.assigns.current_user.deposit + (String.to_integer(deposit["deposit"])/100)
   end
 
 end
