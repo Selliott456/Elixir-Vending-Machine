@@ -17,12 +17,14 @@ defmodule Match_MVPWeb.DepositLive do
     {:ok, socket}
   end
 
-  def handle_event("deposit_coin", %{"deposit" => deposit}, socket) do
-    current_user_balance = socket.assigns.current_user.deposit * 100
-    deposit_as_int = String.to_integer(deposit["deposit"])
+  def handle_event("deposit_coin", %{"params" => %{"deposit" => deposit}} , socket) do
+    user = Accounts.get_user!(socket.assigns.current_user.id)
+
+    current_user_balance = user.deposit * 100
+    deposit_as_int = String.to_integer(deposit)
     total_deposit = (current_user_balance + deposit_as_int) / 100
 
-    case Accounts.update_user(socket.assigns.current_user, %{deposit: total_deposit}) do
+    case Accounts.update_user(user, %{deposit: total_deposit}) do
       %User{} ->
         socket =
           socket

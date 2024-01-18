@@ -17,7 +17,7 @@ defmodule Match_MVPWeb.Helpers do
   end
 
   def assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "product")
+    form = to_form(changeset, as: "params")
 
     if changeset.valid? do
       assign(socket, form: form, check_errors: false)
