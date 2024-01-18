@@ -8,7 +8,7 @@ defmodule Match_MVPWeb.UserSessionController do
     create(conn, params, "Account created successfully!")
 
     conn
-    |> redirect(to: ~p"/users/user_actions")
+    |> redirect(to: ~p"/")
   end
 
   def create(conn, params) do
@@ -22,7 +22,7 @@ defmodule Match_MVPWeb.UserSessionController do
       conn
       |> put_flash(:info, info)
       |> UserAuth.log_in_user(user, user_params)
-      |> redirect(to: ~p"/users/user_actions")
+      |> redirect(to: ~p"/")
     else
       conn
       |> put_flash(:error, "Invalid username or password")
@@ -35,6 +35,6 @@ defmodule Match_MVPWeb.UserSessionController do
     conn
     |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()
-    |> redirect(to: ~p"/users/log_in")
+    |> redirect(to: ~p"/")
   end
 end

@@ -17,6 +17,7 @@ defmodule Match_MVPWeb.UserActionsLive do
       |> assign(:product_list, product_list)
       |> assign(:basket, [])
       |> assign(:order_total, 0)
+      |> assign(:text_value, "")
       |> assign_current_user(session)
       |> assign_form(changeset)
 
@@ -55,8 +56,7 @@ defmodule Match_MVPWeb.UserActionsLive do
         socket =
           socket
           |> assign_form(Map.put(changeset, :action, :validate))
-          |> put_flash(:info, "success")
-
+          |> put_flash(:info, "Product added")
         {:noreply, socket}
 
         {:error, _ } ->
@@ -66,7 +66,7 @@ defmodule Match_MVPWeb.UserActionsLive do
         {:noreply, socket}
     end
 
-    {:noreply, socket}
+    {:noreply, socket |> assign(:text_value, nil)}
   end
 
   def handle_event("add_to_basket", product, socket) do
