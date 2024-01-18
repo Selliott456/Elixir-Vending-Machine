@@ -1,4 +1,5 @@
 defmodule Match_MVPWeb.Router do
+  alias Match_MVPWeb.Reset.ResetLive
   use Match_MVPWeb, :router
 
   import Match_MVPWeb.UserAuth
@@ -54,8 +55,6 @@ defmodule Match_MVPWeb.Router do
       on_mount: [{Match_MVPWeb.UserAuth, :redirect_if_user_is_authenticated}] do
       live "/users/register", UserRegistrationLive, :new
       live "/users/log_in", UserLoginLive, :new
-      live "/users/reset_password", UserForgotPasswordLive, :new
-      live "/users/reset_password/:token", UserResetPasswordLive, :edit
     end
 
     post "/users/log_in", UserSessionController, :create
@@ -66,6 +65,7 @@ defmodule Match_MVPWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{Match_MVPWeb.UserAuth, :ensure_authenticated}] do
+        live "/deposit", DepositLive
     end
   end
 
@@ -80,6 +80,8 @@ defmodule Match_MVPWeb.Router do
       live "/users/confirm", UserConfirmationInstructionsLive, :new
       live "/users/user_actions", UserActionsLive
       live "/users/checkout", CheckoutLive
+
+      live "/users/reset", ResetLive
     end
   end
 end

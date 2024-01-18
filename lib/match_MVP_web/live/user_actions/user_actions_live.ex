@@ -4,6 +4,7 @@ defmodule Match_MVPWeb.UserActionsLive do
   alias Match_MVP.VendingMachine.Product
   alias Match_MVP.Products
   alias Match_MVP.Accounts
+  alias Match_MVP.Accounts.User
 
   def mount(_params, session, socket) do
     remove_empty_products()
@@ -94,13 +95,31 @@ defmodule Match_MVPWeb.UserActionsLive do
         _ ->
           socket =
             socket
-            |> put_flash(:error, "something went wrong")
+            |> put_flash(:error, "could not find product")
 
           {:noreply, socket}
       end
     end)
 
     {:noreply, socket}
+  end
+
+  def handle_event("return_deposit", _params, socket) do
+    case Accounts.get_user!(socket.assigns.current_user.id) do
+      %User{} = user ->
+        Accounts.update_user(user, %{deposit: 0})
+        socket =
+          socket
+          |> redirect(to: ~p"/deposit")
+
+        {:noreply, socket}
+
+      _ ->
+        socket =
+          socket
+          |> put_flash(:error, "No user found")
+        {:error, socket}
+    end
   end
 
   def calculate_order_total(basket) do

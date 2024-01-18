@@ -1,0 +1,21 @@
+<div class="bg-primaryVariantOrange p-[40px] rounded-2xl text-[20px]">
+<div class="bg-white p-[20px] rounded-2xl flex flex-col items-center">
+<h1> deposit coins </h1>
+<h2>balance: &#8364 <%= @deposit %></h2>
+  <div class="">
+    <.simple_form
+      for={@form}
+      id="registration_form"
+      phx-submit="deposit_coin"
+      action={~p"/deposit"}
+      method="post"
+    >
+      <.input field={@form[:deposit]} type="select" options={[100, 50, 20, 10, 5]} label="coin value" />
+      <:actions>
+        <button phx-disable-with="Adding to balance..." class="w-full my-[20px] bg-secondaryPink text-white p-2 rounded-xl">Add coin</button>
+      </:actions>
+    </.simple_form>
+    <.link class="bg-secondaryGreen text-white p-2 rounded-xl" href={~p"/users/user_actions"}>Go to vending macine</.link>
+  </div>
+</div>
+</div>

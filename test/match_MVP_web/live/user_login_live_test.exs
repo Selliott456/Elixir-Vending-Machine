@@ -65,7 +65,7 @@ defmodule Match_MVPWeb.UserLoginLiveTest do
         lv
         |> element(~s|main a:fl-contains("Sign up")|)
         |> render_click()
-        |> follow_redirect(conn, ~p"/users/register")
+        |> follow_redirect(conn, ~p"/mix test user")
 
       assert login_html =~ "Register"
     end
