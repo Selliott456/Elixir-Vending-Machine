@@ -4,6 +4,7 @@ defmodule Match_MVPWeb.CheckoutLive do
   alias Match_MVP.Orders
   alias Match_MVP.Accounts
   alias Match_MVP.Accounts.User
+  alias Match_MVPWeb.Helpers
 
   def mount(_params, session, socket) do
     user_order = Orders.get_orders_by_user_id(socket.assigns.current_user.id)
@@ -14,7 +15,7 @@ defmodule Match_MVPWeb.CheckoutLive do
 
     socket =
       socket
-      |> assign_current_user(session)
+      |> Helpers.assign_current_user(session)
       |> assign(:order, user_order)
       |> assign(:change_due, change_due)
       |> assign(:change_available, change_available / 100)
@@ -24,22 +25,10 @@ defmodule Match_MVPWeb.CheckoutLive do
     {:ok, socket}
   end
 
-  def assign_current_user(socket, session) do
-    case session do
-      %{"user_token" => user_token} ->
-        assign_new(socket, :current_user, fn ->
-          Accounts.get_user_by_session_token(user_token)
-        end)
-
-      %{} ->
-        assign_new(socket, :current_user, fn -> nil end)
-    end
-  end
 
   def handle_event("make_change", _params, socket) do
     case Accounts.get_user!(socket.assigns.current_user.id) do
       %User{} = user ->
-        IO.inspect(Float.floor(socket.assigns.change_leftover / 100))
         Accounts.update_user(user, %{deposit: socket.assigns.change_leftover / 100})
         {:noreply, socket}
 

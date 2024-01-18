@@ -67,8 +67,7 @@ defmodule Match_MVPWeb.Router do
       on_mount: [{Match_MVPWeb.UserAuth, :ensure_authenticated}] do
         live "/deposit", DepositLive
         live "/users/user_actions", UserActionsLive
-        live "/users/checkout", CheckoutLive
-        live "/users/reset", ResetLive
+        live "/buy", CheckoutLive
     end
   end
 

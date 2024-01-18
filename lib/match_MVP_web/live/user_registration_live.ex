@@ -17,7 +17,6 @@ defmodule Match_MVPWeb.UserRegistrationLive do
           to your account now.
         </:subtitle>
       </.header>
-
       <.simple_form
         for={@form}
         id="registration_form"

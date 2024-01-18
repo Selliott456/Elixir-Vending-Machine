@@ -6,6 +6,8 @@ defmodule Match_MVPWeb.UserActionsLive do
   alias Match_MVP.Accounts
   alias Match_MVP.Accounts.User
 
+  alias Match_MVPWeb.Helpers
+
   def mount(_params, session, socket) do
     remove_empty_products()
     changeset = Products.change_product_registration(%Product{})
@@ -18,33 +20,13 @@ defmodule Match_MVPWeb.UserActionsLive do
       |> assign(:basket, [])
       |> assign(:order_total, 0)
       |> assign(:text_value, "")
-      |> assign_current_user(session)
-      |> assign_form(changeset)
+      |> Helpers.assign_current_user(session)
+      |> Helpers.assign_form(changeset)
 
     {:ok, socket}
   end
 
-  def assign_current_user(socket, session) do
-    case session do
-      %{"user_token" => user_token} ->
-        assign_new(socket, :current_user, fn ->
-          Accounts.get_user_by_session_token(user_token)
-        end)
 
-      %{} ->
-        assign_new(socket, :current_user, fn -> nil end)
-    end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "product")
-
-    if changeset.valid? do
-      assign(socket, form: form, check_errors: false)
-    else
-      assign(socket, form: form)
-    end
-  end
 
   def handle_event("add_product", %{"product" => product_params}, socket) do
     seller_id = socket.assigns.current_user.id
@@ -55,14 +37,16 @@ defmodule Match_MVPWeb.UserActionsLive do
 
         socket =
           socket
-          |> assign_form(Map.put(changeset, :action, :validate))
+          |> Helpers.assign_form(Map.put(changeset, :action, :validate))
           |> put_flash(:info, "Product added")
+
         {:noreply, socket}
 
-        {:error, _ } ->
+      _ ->
         socket =
           socket
           |> put_flash(:error, "product already in stock")
+
         {:noreply, socket}
     end
 
@@ -111,6 +95,7 @@ defmodule Match_MVPWeb.UserActionsLive do
     case Accounts.get_user!(socket.assigns.current_user.id) do
       %User{} = user ->
         Accounts.update_user(user, %{deposit: 0})
+
         socket =
           socket
           |> redirect(to: ~p"/deposit")
@@ -121,6 +106,7 @@ defmodule Match_MVPWeb.UserActionsLive do
         socket =
           socket
           |> put_flash(:error, "No user found")
+
         {:error, socket}
     end
   end
@@ -128,8 +114,6 @@ defmodule Match_MVPWeb.UserActionsLive do
   def calculate_order_total(basket) do
     item_costs = Enum.map(basket, fn item -> String.to_float(item["cost"]) end)
     Float.round(Enum.reduce(item_costs, fn item_cost, acc -> item_cost + acc end), 2)
-
-    # Orders.create_order(socket.assigns.current_user.id, %{basket: basket, total_cost: item_costs, change_due: 12.34})
   end
 
   def remove_empty_products() do
