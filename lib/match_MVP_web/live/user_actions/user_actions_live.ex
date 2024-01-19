@@ -12,20 +12,27 @@ defmodule Match_MVPWeb.UserActionsLive do
     remove_empty_products()
     changeset = Products.change_product_registration(%Product{})
     product_list = Products.list_products()
+    seller_product_list = Products.get_products_by_seller_id(socket.assigns.current_user.id)
 
     socket =
       socket
-      |> assign(trigger_submit: false, check_errors: false)
+      |> assign(trigger_submit: false, check_errors: true)
       |> assign(:product_list, product_list)
       |> assign(:basket, [])
       |> assign(:order_total, 0)
-      |> assign(:text_value, "")
+      |> assign(:seller_product_list, seller_product_list)
+      #
       |> Helpers.assign_current_user(session)
       |> Helpers.assign_form(changeset)
 
     {:ok, socket}
   end
 
+  def handle_event("select_update_product", %{"id" => product_id}, socket) do
+
+
+        {:noreply, socket}
+    end
 
 
   def handle_event("add_product", %{"params" => product_params}, socket) do

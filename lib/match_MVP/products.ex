@@ -31,4 +31,10 @@ defmodule Match_MVP.Products do
   def change_product_registration(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
+
+  def get_products_by_seller_id(seller_id) do
+    Product
+    |> where([p], p.seller_id == ^seller_id)
+    |> Repo.all()
+  end
 end

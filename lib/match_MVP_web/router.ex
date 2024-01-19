@@ -68,6 +68,8 @@ defmodule Match_MVPWeb.Router do
         live "/deposit", DepositLive
         live "/users/user_actions", UserActionsLive
         live "/buy", CheckoutLive
+        live "/add_product", AddProductLive
+        live "/update_product/:id", UpdateProductLive
     end
   end
 

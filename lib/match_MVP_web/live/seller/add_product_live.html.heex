@@ -1,0 +1,39 @@
+    <h1 class="text-[30px] bg-secondaryGreen text-white px-[20px]">
+      Vending machine - Seller side
+    </h1>
+    <.simple_form
+      for={@form}
+      id="add_product_form"
+      phx-submit="add_product"
+      phx-trigger-action={@trigger_submit}
+    >
+      <h2 class="mt-[20px] bg-primaryOrange text-white px-[20px]">Add Product</h2>
+      <.input
+        value={@text_value}
+        field={@form[:product_name]}
+        type="text"
+        label="Product name"
+        required
+      />
+      <.input
+        value={@text_value}
+        field={@form[:amount_available]}
+        value={}
+        type="text"
+        label="Amount"
+        required
+      />
+      <.input value={@text_value} field={@form[:cost]} type="text" label="Cost per item" required />
+      <.error :if={@check_errors}>
+        Oops, something went wrong! Please check the errors below.
+      </.error>
+      <:actions>
+        <button
+          class="bg-secondaryGreen text-white p-2 rounded-xl"
+          phx-disable-with="Adding product..."
+          class="w-full"
+        >
+          Add product <span aria-hidden="true">→</span>
+        </button>
+      </:actions>
+    </.simple_form>

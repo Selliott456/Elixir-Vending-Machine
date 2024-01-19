@@ -1,44 +1,23 @@
 <div class="flex flex-col bg-spacerGrey pt-[30px] rounded">
   <%= if @current_user.role != "buyer" do %>
-    <h1 class="text-[30px] bg-secondaryGreen text-white px-[20px]">
-      Vending machine - Seller side
-    </h1>
-    <.simple_form
-      for={@form}
-      id="add_product_form"
-      phx-submit="add_product"
-      phx-trigger-action={@trigger_submit}
+    <.link
+      class="bg-secondaryGreen text-white p-2 rounded-xl mb-[20px]"
+      href={~p"/add_product"}
+      phx-click="purchase"
     >
-      <h2 class="mt-[20px] bg-primaryOrange text-white px-[20px]">Add Product</h2>
-      <.input
-        value={@text_value}
-        field={@form[:product_name]}
-        type="text"
-        label="Product name"
-        required
-      />
-      <.input
-        value={@text_value}
-        field={@form[:amount_available]}
-        value={}
-        type="text"
-        label="Amount"
-        required
-      />
-      <.input value={@text_value} field={@form[:cost]} type="text" label="Cost per item" required />
-      <.error :if={@check_errors}>
-        Oops, something went wrong! Please check the errors below.
-      </.error>
-      <:actions>
-        <button
-          class="bg-secondaryGreen text-white p-2 rounded-xl"
-          phx-disable-with="Adding product..."
-          class="w-full"
-        >
-          Add product <span aria-hidden="true">→</span>
-        </button>
-      </:actions>
-    </.simple_form>
+      Add a new product
+    </.link>
+    <h2>Click existing products to update:</h2>
+    <%= for product <- @seller_product_list do %>
+      <.link
+        href={~p"/update_product/#{product.id}"}
+        class="bg-secondaryPink text-white p-2.5 rounded-xl mb-[20px]"
+        phx-click="select_update_product"
+        phx-value-id={product.id}
+      >
+        <%= product.product_name %>
+      </.link>
+    <% end %>
   <% else %>
     <div class="flex flex-row">
       <div class="flex flex-col">
@@ -98,12 +77,12 @@
             </.link>
           <% else %>
             <p class="bg-secondaryPink text-white">!You have insufficient funds!</p>
-          <.link
-            href={~p"/deposit"}
-            class="bg-secondaryGreen text-white p-2.5 rounded-xl mb-[20px]"
-          >
-            Deposit coins
-          </.link>
+            <.link
+              href={~p"/deposit"}
+              class="bg-secondaryGreen text-white p-2.5 rounded-xl mb-[20px]"
+            >
+              Deposit coins
+            </.link>
           <% end %>
           <p class="m-3">basket</p>
           <%= for product <- @basket do %>
