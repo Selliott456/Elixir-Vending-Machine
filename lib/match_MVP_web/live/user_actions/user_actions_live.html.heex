@@ -69,7 +69,7 @@
       <div class="flex flex-col mx-[20px]">
         <div class="flex flex-row items-center justify-center min-w-[200px] bg-red-100 mt-[125px] mb-[20px] max-w-1 ">
           <h2 class="px-[10] py-[15px]">Available balance: &#8364</h2>
-          <%= Float.round(@current_user.deposit) %>
+          <%= Float.ceil(@current_user.deposit, 2) %>
         </div>
         <div class="flex flex-col items-center bg-green-100 max-h-[400px] overflow-scroll">
           <p class="my-[20px]">total: &#8364 <%= @order_total %></p>

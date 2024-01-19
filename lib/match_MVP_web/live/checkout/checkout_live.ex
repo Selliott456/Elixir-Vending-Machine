@@ -55,25 +55,12 @@ defmodule Match_MVPWeb.CheckoutLive do
       _ ->
         socket =
           socket
-          |> put_flash(:error, "could complete purchase")
+          |> put_flash(:error, "could not complete purchase")
 
         {:noreply, socket}
     end
 
     {:noreply, socket}
-  end
-
-  def handle_event("update_balance", _params, socket) do
-    case Accounts.get_user!(socket.assigns.current_user.id) do
-      %User{} = user ->
-        Accounts.update_user(user, %{deposit: socket.assigns.change_due})
-
-        {:noreply, socket}
-
-      _ ->
-        IO.puts("NO USER")
-        {:noreply, socket}
-    end
   end
 
   def get_change(amount) do
