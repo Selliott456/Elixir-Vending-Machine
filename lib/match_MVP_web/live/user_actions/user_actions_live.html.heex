@@ -1,5 +1,6 @@
 <div class="flex flex-col bg-spacerGrey pt-[30px] rounded">
   <%= if @current_user.role != "buyer" do %>
+  <div class="flex flex-col items-center">
     <.link
       class="bg-secondaryGreen text-white p-2 rounded-xl mb-[20px]"
       href={~p"/add_product"}
@@ -7,8 +8,10 @@
     >
       Add a new product
     </.link>
-    <h2>Click existing products to update:</h2>
+    <div class="flex flex-col w-[400px] bg-white items-center mb-[30px]">
+    <h2 class="my-[40px]"> Update existing product:</h2>
     <%= for product <- @seller_product_list do %>
+    <div class="flex flex-row justify-center">
       <.link
         href={~p"/update_product/#{product.id}"}
         class="bg-secondaryPink text-white p-2.5 rounded-xl mb-[20px]"
@@ -17,7 +20,10 @@
       >
         <%= product.product_name %>
       </.link>
+  </div>
     <% end %>
+    </div>
+    </div>
   <% else %>
     <div class="flex flex-row">
       <div class="flex flex-col">
