@@ -5,6 +5,8 @@ defmodule Match_MVPWeb.CheckoutLive do
   alias Match_MVP.Accounts
   alias Match_MVP.Accounts.User
   alias Match_MVPWeb.Helpers
+  alias Match_MVP.VendingMachine.Product
+  alias Match_MVP.Products
 
   def mount(_params, session, socket) do
     user_order = Orders.get_orders_by_user_id(socket.assigns.current_user.id)
@@ -25,15 +27,37 @@ defmodule Match_MVPWeb.CheckoutLive do
     {:ok, socket}
   end
 
-
   def handle_event("make_change", _params, socket) do
     case Accounts.get_user!(socket.assigns.current_user.id) do
       %User{} = user ->
+        basket = socket.assigns.order.basket
+
+        Enum.map(basket, fn product ->
+          product_id = String.to_integer(product["id"])
+
+          case Products.get_product_by_id!(product_id) do
+            %Product{} = product ->
+              Products.update_product(product, %{amount_available: product.amount_available - 1})
+
+              {:noreply, socket}
+            _ ->
+              socket =
+                socket
+                |> put_flash(:error, "could not find product")
+
+              {:noreply, socket}
+          end
+        end)
+
         Accounts.update_user(user, %{deposit: socket.assigns.change_leftover / 100})
         {:noreply, socket}
 
       _ ->
-        IO.puts("NO USER")
+        socket =
+          socket
+          |> put_flash(:error, "could complete purchase")
+
+        {:noreply, socket}
     end
 
     {:noreply, socket}

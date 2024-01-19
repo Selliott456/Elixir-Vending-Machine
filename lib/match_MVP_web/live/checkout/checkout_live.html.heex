@@ -1,19 +1,8 @@
 <div class="bg-primaryVariantOrange p-[40px] rounded-2xl text-[20px]">
   <div class="bg-white p-[20px] rounded-2xl flex flex-col items-center">
     <h2 class="p-[10px]">Change due: £<%= @change_due %></h2>
-    <.link
-      href={~p"/users/user_actions"}
-      phx-click="update_balance"
-      class="bg-secondaryGreen text-white p-4 rounded-xl mx-auto m-[10px]"
-    >
-      shop more
-    </.link>
     <div class="m-[60px] flex flex-col items-center border-2 border-spacerGrey p-[20px]">
-      <p class="p-[10px] mb-[10px] bg-red-600 animate-pulse">
-        Our smallest currency denomination is 5 cents, so full change is not always available
-      </p>
       <p>Change available: &#8364;<%= @change_available %></p>
-      <p class="mb-[20px]">Change we can't make: &#162;<%= @change_leftover %></p>
       <p>The coins you recieve:</p>
       <div class="font-bold my-[20px]">
         <%= @coin_values %>

@@ -68,26 +68,11 @@ defmodule Match_MVPWeb.UserActionsLive do
   end
 
   def handle_event("purchase", _params, socket) do
+    user_id = socket.assigns.current_user.id
     basket = socket.assigns.basket
-    create_order(socket)
+    total_cost = socket.assigns.order_total
 
-    Enum.map(basket, fn product ->
-      product_id = String.to_integer(product["id"])
-
-      case Products.get_product_by_id!(product_id) do
-        %Product{} = product ->
-          Products.update_product(product, %{amount_available: product.amount_available - 1})
-          {:noreply, socket}
-
-        _ ->
-          socket =
-            socket
-            |> put_flash(:error, "could not find product")
-
-          {:noreply, socket}
-      end
-    end)
-
+    Orders.create_order(user_id, %{basket: basket, total_cost: total_cost})
     {:noreply, socket}
   end
 
@@ -125,13 +110,5 @@ defmodule Match_MVPWeb.UserActionsLive do
         _ -> nil
       end
     end)
-  end
-
-  defp create_order(socket) do
-    user_id = socket.assigns.current_user.id
-    basket = socket.assigns.basket
-    total_cost = socket.assigns.order_total
-
-    Orders.create_order(user_id, %{basket: basket, total_cost: total_cost})
   end
 end

@@ -97,14 +97,13 @@
               checkout
             </.link>
           <% else %>
-            <p class="bg-red-600 animate-pulse">!You have insufficient funds!</p>
-            <.link
-              href={~p"/users/user_actions"}
-              class="bg-secondaryGreen text-white p-2 rounded-xl mx-auto"
-              phx-click="purchase"
-            >
-              click to restart order
-            </.link>
+            <p class="bg-secondaryPink text-white">!You have insufficient funds!</p>
+          <.link
+            href={~p"/deposit"}
+            class="bg-secondaryGreen text-white p-2.5 rounded-xl mb-[20px]"
+          >
+            Deposit coins
+          </.link>
           <% end %>
           <p class="m-3">basket</p>
           <%= for product <- @basket do %>
