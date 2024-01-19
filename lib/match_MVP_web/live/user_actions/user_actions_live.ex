@@ -21,19 +21,11 @@ defmodule Match_MVPWeb.UserActionsLive do
       |> assign(:basket, [])
       |> assign(:order_total, 0)
       |> assign(:seller_product_list, seller_product_list)
-      #
       |> Helpers.assign_current_user(session)
       |> Helpers.assign_form(changeset)
 
     {:ok, socket}
   end
-
-  def handle_event("select_update_product", %{"id" => product_id}, socket) do
-
-
-        {:noreply, socket}
-    end
-
 
   def handle_event("add_product", %{"params" => product_params}, socket) do
     seller_id = socket.assigns.current_user.id
