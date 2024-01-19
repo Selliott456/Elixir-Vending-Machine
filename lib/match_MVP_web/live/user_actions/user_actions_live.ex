@@ -28,7 +28,7 @@ defmodule Match_MVPWeb.UserActionsLive do
 
 
 
-  def handle_event("add_product", %{"product" => product_params}, socket) do
+  def handle_event("add_product", %{"params" => product_params}, socket) do
     seller_id = socket.assigns.current_user.id
 
     case Products.create_product(seller_id, product_params) do
