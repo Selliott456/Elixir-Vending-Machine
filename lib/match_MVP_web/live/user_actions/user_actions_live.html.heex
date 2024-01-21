@@ -1,28 +1,28 @@
 <div class="flex flex-col bg-spacerGrey pt-[30px] rounded">
   <%= if @current_user.role != "buyer" do %>
-  <div class="flex flex-col items-center">
-    <.link
-      class="bg-secondaryGreen text-white p-2 rounded-xl mb-[20px]"
-      href={~p"/add_product"}
-      phx-click="purchase"
-    >
-      Add a new product
-    </.link>
-    <div class="flex flex-col w-[400px] bg-white items-center mb-[30px]">
-    <h2 class="my-[40px]"> Update existing product:</h2>
-    <%= for product <- @seller_product_list do %>
-    <div class="flex flex-row justify-center">
+    <div class="flex flex-col items-center">
       <.link
-        href={~p"/update_product/#{product.id}"}
-        class="bg-secondaryPink text-white p-2.5 rounded-xl mb-[20px]"
-        phx-click="select_update_product"
-        phx-value-id={product.id}
+        class="bg-secondaryGreen text-white p-2 rounded-xl mb-[20px]"
+        href={~p"/add_product"}
+        phx-click="purchase"
       >
-        <%= product.product_name %>
+        Add a new product
       </.link>
-  </div>
-    <% end %>
-    </div>
+      <div class="flex flex-col w-[400px] bg-white items-center mb-[30px]">
+        <h2 class="my-[40px]">Update existing product:</h2>
+        <%= for product <- @seller_product_list do %>
+          <div class="flex flex-row justify-center">
+            <.link
+              href={~p"/update_product/#{product.id}"}
+              class="bg-secondaryPink text-white p-2.5 rounded-xl mb-[20px]"
+              phx-click="select_update_product"
+              phx-value-id={product.id}
+            >
+              <%= product.product_name %>
+            </.link>
+          </div>
+        <% end %>
+      </div>
     </div>
   <% else %>
     <div class="flex flex-row">

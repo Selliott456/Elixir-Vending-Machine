@@ -1,53 +1,42 @@
-    <h1 class="text-[30px] bg-secondaryGreen text-white px-[20px]">
-      Vending machine - Seller side
-    </h1>
-    <.simple_form
-      for={@form}
-      id="add_product_form"
-      phx-submit="add_product"
-      phx-change="validate"
-      phx-trigger-action={@trigger_submit}
-      method="post"
+<h1 class="text-[30px] bg-secondaryGreen text-white px-[20px]">
+  Vending machine - Seller side
+</h1>
+<.simple_form
+  for={@form}
+  id="add_product_form"
+  phx-submit="add_product"
+  phx-change="validate"
+  phx-trigger-action={@trigger_submit}
+  method="post"
+>
+  <h2 class="mt-[20px] bg-primaryOrange text-white px-[20px]">Add Product</h2>
+  <.input field={@form[:product_name]} type="text" label="Product name" required />
+  <.input field={@form[:amount_available]} value={} type="text" label="Amount" required />
+  <.input value={@text_value} field={@form[:cost]} type="text" label="Cost per item" required />
+  <.error :if={@check_errors}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <:actions>
+    <button
+      class="bg-secondaryGreen text-white p-2 rounded-xl"
+      phx-disable-with="Adding product..."
+      class="w-full"
     >
-      <h2 class="mt-[20px] bg-primaryOrange text-white px-[20px]">Add Product</h2>
-      <.input
-        field={@form[:product_name]}
-        type="text"
-        label="Product name"
-        required
-      />
-      <.input
-        field={@form[:amount_available]}
-        value={}
-        type="text"
-        label="Amount"
-        required
-      />
-      <.input value={@text_value} field={@form[:cost]} type="text" label="Cost per item" required />
-      <.error :if={@check_errors}>
-        Oops, something went wrong! Please check the errors below.
-      </.error>
-      <:actions>
-        <button
-          class="bg-secondaryGreen text-white p-2 rounded-xl"
-          phx-disable-with="Adding product..."
-          class="w-full"
-        >
-          Add product <span aria-hidden="true">→</span>
-        </button>
-      </:actions>
-    </.simple_form>
+      Add product <span aria-hidden="true">→</span>
+    </button>
+  </:actions>
+</.simple_form>
 
-    <h2 class="mt-[20px] bg-primaryOrange text-white px-[20px] mb-[60px]">Update your products:</h2>
-    <div class="flex-wrap">
-    <%= for product <- @seller_product_list do %>
-            <.link
-        href={~p"/update_product/#{product.id}"}
-        class="bg-secondaryPink text-white p-2.5 rounded-xl mb-[20px] mx-[20px] max-w-[150px] text-center"
-        phx-click="select_update_product"
-        phx-value-id={product.id}
-      >
-        <%= product.product_name %>
-      </.link>
-    <% end %>
-    </div>
+<h2 class="mt-[20px] bg-primaryOrange text-white px-[20px] mb-[60px]">Update your products:</h2>
+<div class="flex-wrap">
+  <%= for product <- @seller_product_list do %>
+    <.link
+      href={~p"/update_product/#{product.id}"}
+      class="bg-secondaryPink text-white p-2.5 rounded-xl mb-[20px] mx-[20px] max-w-[150px] text-center"
+      phx-click="select_update_product"
+      phx-value-id={product.id}
+    >
+      <%= product.product_name %>
+    </.link>
+  <% end %>
+</div>
