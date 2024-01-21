@@ -7,39 +7,44 @@ defmodule Match_MVPWeb.AddProductLive do
 
   def mount(_params, session, socket) do
     changeset = Products.change_product_registration(%Product{})
-
+    seller_product_list = Products.get_products_by_seller_id(socket.assigns.current_user.id)
     socket =
       socket
       |> assign(trigger_submit: false, check_errors: false)
       |> assign(:text_value, "")
       |> Helpers.assign_current_user(session)
       |> Helpers.assign_form(changeset)
+      |> assign(:seller_product_list, seller_product_list)
 
     {:ok, socket}
+  end
+
+  def handle_event("validate", %{"params" => product_params} , socket) do
+    changeset = Products.change_product_registration(%Product{}, product_params)
+    {:noreply, Helpers.assign_form(socket, Map.put(changeset, :action, :validate))}
+    {:noreply, socket}
   end
 
   def handle_event("add_product", %{"params" => product_params}, socket) do
     seller_id = socket.assigns.current_user.id
 
     case Products.create_product(seller_id, product_params) do
-      {:ok, _product} ->
-        changeset = Products.change_product_registration(%Product{}, product_params)
-
+      {:ok, product} ->
+        changeset = Products.change_product_registration(%Product{}, product)
         socket =
           socket
-          |> Helpers.assign_form(Map.put(changeset, :action, :validate))
-          |> put_flash(:info, "Product added")
+          |> assign(trigger_submit: true)
+          |> Helpers.assign_form(changeset)
+          |> put_flash(:info, "product created!")
 
         {:noreply, socket}
 
-      _ ->
+      {:error, %Ecto.Changeset{} = changeset} ->
+
         socket =
           socket
-          |> put_flash(:error, "product already in stock")
-
+          |> Helpers.assign_form(changeset)
         {:noreply, socket}
     end
-
-    {:noreply, socket |> assign(:text_value, nil)}
   end
 end

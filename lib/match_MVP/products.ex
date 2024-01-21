@@ -35,6 +35,7 @@ defmodule Match_MVP.Products do
   def get_products_by_seller_id(seller_id) do
     Product
     |> where([p], p.seller_id == ^seller_id)
+    |> order_by([p], desc: p.inserted_at)
     |> Repo.all()
   end
 end

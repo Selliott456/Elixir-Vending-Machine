@@ -22,7 +22,7 @@ defmodule Match_MVPWeb.UserSessionController do
       conn
       |> put_flash(:info, info)
       |> UserAuth.log_in_user(user, user_params)
-      |> redirect(to: ~p"/")
+      # |> redirect(to: ~p"/")
     else
       conn
       |> put_flash(:error, "Invalid username or password")
