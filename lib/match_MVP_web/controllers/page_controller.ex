@@ -3,6 +3,7 @@ defmodule Match_MVPWeb.PageController do
 
   def home(conn, _params) do
 
-    render(conn, :home, layout: false)
+    redirect(conn, to: ~p"/users/register")
+    # render(conn, :home, layout: false)
   end
 end
